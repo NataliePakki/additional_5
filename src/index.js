@@ -1,42 +1,31 @@
 module.exports = function check(str, bracketsConfig) {
-  var brackets = [];
-    for(var i = 0; i < str.length; i++) {
-      var symbol = str[i];      
-      if(symbol !== " ") {
-        var isFindClose = false;
-        for(var j = 0; j < bracketsConfig.length; j ++) {
-            if(isFindClose) break;
-            var config = bracketsConfig[j];
-            
-            
-            if(symbol === config[0]) {
-                for(k = i + 1; k < str.length; k ++ ) {
-                    if(str[k] === config[1]) {
-                        isFindClose = true;
-                        brackets.push({start: i, end: k});
-                        str = str.substr(0, k) + " " + str.substr(k + 1)
-                        // return str;
+    var openBrackets = [];
+    for (var i = 0; i < str.length; i++) {
+        var symbol = str[i];
+        for (var j = 0; j < bracketsConfig.length; j++) {
+            var bracketConfig = bracketsConfig[j];
+            if (symbol == bracketConfig[1]) {
+                var topOpenBracket = openBrackets.pop();
+                if (topOpenBracket !== j) {
+                    if (symbol == bracketConfig[0]) {
+                        if (topOpenBracket != undefined) {
+                            openBrackets.push(topOpenBracket);
+                        }
+                        openBrackets.push(j);
                         break;
+                    } else {
+                        return false;
                     }
                 }
             }
+            else if (symbol == bracketConfig[0]) {
+                openBrackets.push(j);
+                break;
+            }
         }
-      }
-      if(!isFindClose) return false;
     }
-    // // return brackets;
-    // for(var i = 0; i < brackets.length; i ++) {
-    //     var firstBracker = brackets[i];
-    //     for(var j = i + 1; j < brackets.length; j ++) {
-    //         var secondBracket = brackets[j];
-    //         if( ( (firstBracker.start < secondBracket.start && firstBracker.start < secondBracket.end) && (firstBracker.end < secondBracket.start && firstBracker.end < secondBracket.end) ) || (firstBracker.start < secondBracket.start && firstBracker.start < secondBracket.end) && (firstBracker.end > secondBracket.start && firstBracker.end > secondBracket.end) ) {
-    //             continue;
-    //         }
-    //         else {
-    //             return false;
-    //         }
-    //     }
-    // }    
-
+    if (openBrackets.length != 0) {
+        return false;
+    }
     return true;
 }
